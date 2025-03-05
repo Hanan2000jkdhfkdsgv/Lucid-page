@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>Lucid World - Hack XP Edition</title>
+    <style>
+        @font-face {
+            font-family: 'XPFont';
+            src: url('https://fonts.cdnfonts.com/s/72391/Verdanab.woff') format('woff');
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            background-color: black;
+            color: white;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        /* دکمه استایل ویندوز XP */
+        .xp-button {
+            background: linear-gradient(to bottom, #00a2ff, #0073e6);
+            color: white;
+            border: 2px solid #005bb5;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        .xp-button:hover {
+            background: linear-gradient(to bottom, #0073e6, #005bb5);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas"></canvas> 
+
+    <h2>به دنیای لوسید خوش آمدید - Hack XP Edition</h2>
+    <p>لطفا انتخاب کنید که Taehyung باشید یا Jungkook. یا شاید... چیزی مخفی اینجاست؟ 🤫</p>
+    
+    <input type="text" id="inputField" placeholder="نام شخصیت را وارد کنید">
+    <button onclick="checkName()">ارسال</button>
+    
+    <div id="outputContainer">
+        <div class="title-bar">
+            <span>Lucid Messenger.exe</span>
+            <div class="close-btn" onclick="document.getElementById('outputContainer').style.display='none'">×</div>
+        </div>
+        <div id="output"></div>
+    </div>
+
+    <!-- دکمه دریچه ورود به دنیای لوسید -->
+    <button class="xp-button" onclick="openTelegram()">🔍 دریچه ورود به دنیای لوسید</button>
+
+    <script>
+        function checkName() {
+            var name = document.getElementById("inputField").value.trim().toLowerCase();
+            var output = document.getElementById("output");
+            var container = document.getElementById("outputContainer");
+
+            container.style.opacity = "1";
+
+            let message = "";
+            if (name === "jungkook") {
+                message = `
+                    <strong>From: Jungkook</strong><br>
+                    <strong>To: Taehyung</strong><br><br>
+                    تهیونگ… داری اینو می‌خونی؟ یعنی تونستم… بالاخره تونستم یه راهی پیدا کنم که بهت برسم.  
+                    نمی‌دونی چند وقت دنبال یه راه ارتباطی بودم، چند بار سعی کردم، چند بار شکست خوردم. ولی بالاخره… اینجام.  
+                    دلم برات تنگ شده. بیشتر از چیزی که فکرشو بکنی...  
+                    نمی‌دونم چقدر زمان گذشته، ولی من هنوز همون‌جا گیر کردم. هنوز توی لحظه‌ایم که آخرین بار دیدمت.  
+                    اگه می‌تونی… یه بار دیگه اسممو صدا بزن. شاید… شاید بتونم راهی برای برگشتن پیدا کنم.
+                `;
+            } else if (name === "taehyung") {
+                message = `
+                    <strong>From: Taehyung</strong><br>
+                    <strong>To: Jungkook</strong><br><br>
+                    جونگکوک… داری صدای منو می‌شنوی؟ نمی‌دونم چجوری باید جواب بدم، نمی‌دونم اصلاً این پیغام بهت می‌رسه یا نه،  
+                    ولی اگه یه راهی برای ارتباط پیدا کردی، پس شاید هنوز امیدی هست.  
+                    دلم برات تنگ شده، بیشتر از چیزی که بتونم توی کلمات جا بدم...  
+                    اسم تو؟ هر روز توی ذهنم تکرار شده.  
+                    اگه یه راهی هست، برگرد. یا اگه نمی‌تونی… من پیدات می‌کنم.
+                `;
+            } else {
+                message = "<span style='color:red;'>اسم وارد شده نامعتبر است.</span>";
+            }
+
+            typeEffect(output, message);
+        }
+
+        function typeEffect(element, text) {
+            let index = 0;
+            element.innerHTML = "";
+            let interval = setInterval(() => {
+                if (index < text.length) {
+                    element.innerHTML += text[index] === "\n" ? "<br>" : text[index];
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 50);
+        }
+
+        // پس‌زمینه‌ی متحرک Matrix-style
+        var canvas = document.getElementById("matrixCanvas");
+        var ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        letters = letters.split("");
+
+        var fontSize = 10;
+        var columns = canvas.width / fontSize;
+        var drops = [];
+
+        for (var x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0aff0a";
+            ctx.font = fontSize + "px monospace";
+
+            for (var i = 0; i < drops.length; i++) {
+                var text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+
+        // باز کردن لینک تلگرام در تب جدید
+        function openTelegram() {
+            window.open("https://t.me/mycinder", "_blank");
+        }
+    </script>
+
+</body>
+</html>
